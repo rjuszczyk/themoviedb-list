@@ -1,4 +1,4 @@
-package com.example.radek.android_viewmodel_datastate
+package com.example.radek.movielist
 
 import android.support.annotation.IdRes
 import android.support.v7.app.AppCompatActivity

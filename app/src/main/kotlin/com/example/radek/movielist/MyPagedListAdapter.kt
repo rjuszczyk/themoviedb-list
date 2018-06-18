@@ -1,4 +1,4 @@
-package com.example.radek.android_viewmodel_datastate
+package com.example.radek.movielist
 
 import android.annotation.SuppressLint
 import android.arch.paging.PagedListAdapter
@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
+import com.example.radek.jobexecutor.State
 
 @SuppressLint("SetTextI18n")
 class MyPagedListAdapter(
@@ -42,14 +43,14 @@ class MyPagedListAdapter(
         }
     }
 
-    var repositoryState :MainNetworkRepository.State by object:ObservableProperty<MainNetworkRepository.State>(MainNetworkRepository.State.NotStarted) {
-        override fun afterChange(property: KProperty<*>, oldValue: MainNetworkRepository.State, newValue: MainNetworkRepository.State) {
+    var repositoryState : State by object:ObservableProperty<State>(State.NotStarted) {
+        override fun afterChange(property: KProperty<*>, oldValue: State, newValue: State) {
 
-            val rowInsertedOrRemoved = oldValue == MainNetworkRepository.State.NotStarted &&
-                    newValue != MainNetworkRepository.State.NotStarted
+            val rowInsertedOrRemoved = oldValue == State.NotStarted &&
+                    newValue != State.NotStarted
 
             if (rowInsertedOrRemoved) {
-                if (newValue != MainNetworkRepository.State.NotStarted) {
+                if (newValue != State.NotStarted) {
                     notifyItemInserted(super@MyPagedListAdapter.getItemCount())
                 } else {
                     notifyItemRemoved(super@MyPagedListAdapter.getItemCount())
@@ -61,7 +62,7 @@ class MyPagedListAdapter(
     }
 
     override fun getItemCount(): Int {
-        if (repositoryState == MainNetworkRepository.State.NotStarted) {
+        if (repositoryState == State.NotStarted) {
             return super.getItemCount()
         } else {
             return super.getItemCount() + 1
@@ -80,8 +81,8 @@ class MyPagedListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (repositoryState != MainNetworkRepository.State.NotStarted && position == super.getItemCount()) {
-            if (repositoryState == MainNetworkRepository.State.Failed) 1 else 2
+        return if (repositoryState != State.NotStarted && position == super.getItemCount()) {
+            if (repositoryState == State.Failed) 1 else 2
         } else {
             0
         }

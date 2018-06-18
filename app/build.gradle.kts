@@ -11,12 +11,12 @@ plugins {
 android {
     compileSdkVersion(27)
     defaultConfig {
-        applicationId = "com.example.radek.android_viewmodel_datastate"
+        applicationId = "com.example.radek.movielist"
         minSdkVersion(15)
         targetSdkVersion(27)
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "android.support.loadMoviesPage.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
@@ -75,5 +75,5 @@ dependencies {
     val excludeSupportAnnotations: ExternalModuleDependency.() -> Unit = {
         exclude(module = "support-annotations", group = "com.android.support")
     }
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2", excludeSupportAnnotations)
+    androidTestImplementation("com.android.support.loadMoviesPage.espresso:espresso-core:3.0.2", excludeSupportAnnotations)
 }
