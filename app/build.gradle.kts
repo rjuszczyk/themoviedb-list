@@ -65,15 +65,17 @@ dependencies {
     implementation("com.android.support:support-v4:${Versions.supportLibVersion}")
 
     implementation("android.arch.paging:runtime:${Versions.pagingVersion}")
+
     implementation("android.arch.lifecycle:extensions:${Versions.archLifecycleVersion}")
-    implementation("android.arch.persistence.room:runtime:${Versions.archRoomVersion}")
-    annotationProcessor("android.arch.lifecycle:compiler:${Versions.archLifecycleVersion}")
-    annotationProcessor("android.arch.persistence.room:compiler:${Versions.archRoomVersion}")
+    kapt("android.arch.lifecycle:common-java8:${Versions.archLifecycleVersion}")
+//    implementation("android.arch.persistence.room:runtime:${Versions.archRoomVersion}")
+//    kapt("android.arch.persistence.room:compiler:${Versions.archRoomVersion}")
 
     implementation("com.squareup.retrofit2:retrofit:${Versions.retrofitVersion}")
     implementation("com.squareup.retrofit2:converter-gson:${Versions.retrofitVersion}")
     implementation ("com.google.dagger:dagger:${Versions.daggerVersion}")
-
+    implementation("com.google.dagger:dagger-android:${Versions.daggerVersion}")
+    implementation("com.google.dagger:dagger-android-support:${Versions.daggerVersion}")
     kapt("com.google.dagger:dagger-compiler:${Versions.daggerVersion}")
 
     testImplementation("junit:junit:4.12")

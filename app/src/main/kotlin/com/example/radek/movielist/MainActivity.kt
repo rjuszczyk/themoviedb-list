@@ -1,7 +1,6 @@
 package com.example.radek.movielist
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
@@ -9,20 +8,22 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
 import com.example.radek.R
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mainViewModel: MainViewModel
+    @Inject lateinit var mainViewModel: MainViewModel
     private lateinit var adapter: MyPagedListAdapter
     private val recyclerView: RecyclerView by bindView(R.id.recyclerView)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         log("onCreate")
 
         initRecycler()
-
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         mainViewModel.list.observe(this, Observer {
             adapter.submitList(it)

@@ -42,23 +42,28 @@ class MyPagedListAdapter(
         }
     }
 
-    var repositoryState : State by object:ObservableProperty<State>(State.NotStarted) {
-        override fun afterChange(property: KProperty<*>, oldValue: State, newValue: State) {
 
-            val rowInsertedOrRemoved = oldValue == State.NotStarted &&
-                    newValue != State.NotStarted
+    private fun observablePropertyState() : ObservableProperty<State> {
+        return object:ObservableProperty<State>(State.NotStarted){
+            override fun afterChange(property: KProperty<*>, oldValue: State, newValue: State) {
 
-            if (rowInsertedOrRemoved) {
-                if (newValue != State.NotStarted) {
-                    notifyItemInserted(super@MyPagedListAdapter.getItemCount())
+                val rowInsertedOrRemoved = oldValue == State.NotStarted &&
+                        newValue != State.NotStarted
+
+                if (rowInsertedOrRemoved) {
+                    if (newValue != State.NotStarted) {
+                        notifyItemInserted(super@MyPagedListAdapter.getItemCount())
+                    } else {
+                        notifyItemRemoved(super@MyPagedListAdapter.getItemCount())
+                    }
                 } else {
-                    notifyItemRemoved(super@MyPagedListAdapter.getItemCount())
+                    notifyItemChanged(super@MyPagedListAdapter.getItemCount())
                 }
-            } else {
-                notifyItemChanged(super@MyPagedListAdapter.getItemCount())
             }
         }
     }
+
+    var repositoryState : State by observablePropertyState()
 
     override fun getItemCount(): Int {
         if (repositoryState == State.NotStarted) {

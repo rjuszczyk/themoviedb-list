@@ -1,11 +1,15 @@
 package com.example.radek.jobexecutor
 
 class MainNetworkRepository<T>(
-        private val repositoryStatusCallback: (State) -> Unit,
+
         private val pagedDataProvider: PagedDataProvider<T>
 ) {
-
+    private lateinit var repositoryStatusCallback: (State) -> Unit
     private val jobsList = ArrayList<Job<*, T>>()
+
+    fun init(repositoryStatusCallback: (State) -> Unit) {
+        this.repositoryStatusCallback = repositoryStatusCallback
+    }
 
     fun loadInitialPage(callback: (InitialPagedResponse<T>) -> Unit) {
         jobsList.add(InitialJob(callback))
@@ -42,10 +46,12 @@ class MainNetworkRepository<T>(
                         j.callback.invoke(response)
 
                         jobsList.remove(job)
+                        updateCallback()
                         executeNextIfPossible()
                     },
                     { _ ->
                         job.state = State.Failed
+                        updateCallback()
                         executeNextIfPossible()
                     }
             )
@@ -57,10 +63,12 @@ class MainNetworkRepository<T>(
                         j.state = State.Loaded
                         j.callback.invoke(response)
                         jobsList.remove(job)
+                        updateCallback()
                         executeNextIfPossible()
                     },
                     { _ ->
                         job.state = State.Failed
+                        updateCallback()
                         executeNextIfPossible()
                     })
         }

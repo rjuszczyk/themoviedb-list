@@ -16,62 +16,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.Executor
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+        private val mainNetworkRepository: MainNetworkRepository<NetResult>
+) : ViewModel() {
 
-    private val mainNetworkRepository: MainNetworkRepository<NetResult>
+
     internal var list = MutableLiveData<PagedList<NetResult>>()
     internal var repositoryState = MutableLiveData<State>()
 
-    private val retrofit: Retrofit
-    private val api: Api
 
     init {
-        val builder = Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org")
-                .client(OkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create(Gson()))
-        retrofit = builder.build()
-
-        api = retrofit.create(Api::class.java)
+        mainNetworkRepository.init({ repositoryState.postValue(it) })
 
         repositoryState.value = State.NotStarted
-        mainNetworkRepository = MainNetworkRepository({ repositoryState.postValue(it) },
-                object : PagedDataProvider<NetResult> {
-                    override fun provideInitialData(
-                            onLoaded: (InitialPagedResponse<NetResult>) -> Unit,
-                            onFailed: (Throwable) -> Unit
-                    ) {
-                        api.loadMoviesPage(1).enqueue(object : Callback<NetModel> {
-                            override fun onFailure(call: Call<NetModel>?, t: Throwable?) {
-                                onFailed(t!!)
-                            }
-
-                            override fun onResponse(call: Call<NetModel>?, response: Response<NetModel>?) {
-                                val netModel = response!!.body()!!
-                                onLoaded(InitialPagedResponse(netModel.total_pages, netModel.results))
-                            }
-                        })
-                    }
-
-                    override fun providePageData(
-                            page: Int,
-                            onLoaded: (PagedResponse<NetResult>) -> Unit,
-                            onFailed: (Throwable) -> Unit
-                    ) {
-                        api.loadMoviesPage(page).enqueue(object : Callback<NetModel> {
-                            override fun onFailure(call: Call<NetModel>?, t: Throwable?) {
-                                onFailed(t!!)
-                            }
-
-                            override fun onResponse(call: Call<NetModel>?, response: Response<NetModel>?) {
-                                val netModel = response!!.body()!!
-                                onLoaded(PagedResponse(netModel.page, netModel.results))
-                            }
-                        })
-                    }
-                }
-        )
-
         val dataSource: DataSource<Int, NetResult>
         dataSource = object : PageKeyedDataSource<Int, NetResult>() {
             override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, NetResult>) {
