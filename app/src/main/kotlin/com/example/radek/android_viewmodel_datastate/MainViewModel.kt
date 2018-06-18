@@ -5,23 +5,14 @@ import android.arch.lifecycle.ViewModel
 
 class MainViewModel (
         private val mainStringRepository: MainStringRepository,
-        restoredState: MainViewDataState?
+        state: Int
     ) : ViewModel() {
 
     internal var myString = MutableLiveData<String>()
-    internal var state: MutableLiveData<MainViewDataState>
+    internal var state = MutableLiveData<MainViewDataState>()
 
     init {
-        log("MainViewModel init")
-        state = MutableLiveData()
-        if(restoredState == null) {
-            state.value = MainViewDataState(MainViewDataState.NOT_STARTED)
-        } else {
-            state.value = restoredState
-            if(restoredState.state == MainViewDataState.LOADING || restoredState.state == MainViewDataState.LOADED) {
-                performLoading()
-            }
-        }
+        this.state.value = MainViewDataState(state)
     }
 
     fun startLoading() {
