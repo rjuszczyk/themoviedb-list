@@ -19,7 +19,6 @@ class MyPagedListAdapter(
         diffCallback: DiffUtil.ItemCallback<NetResult>
 ) : PagedListAdapter<NetResult, RecyclerView.ViewHolder>(diffCallback) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val height = (parent.context.resources.displayMetrics.density*50).toInt()
         return when (viewType) {

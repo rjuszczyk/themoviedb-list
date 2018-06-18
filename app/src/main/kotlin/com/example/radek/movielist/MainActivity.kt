@@ -8,6 +8,7 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
+import com.example.radek.R
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel

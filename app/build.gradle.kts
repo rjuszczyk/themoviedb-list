@@ -6,17 +6,19 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("kotlin-kapt")
+    //id("kotlin-android-extensions")
 }
 
 android {
     compileSdkVersion(27)
     defaultConfig {
-        applicationId = "com.example.radek.movielist"
+        applicationId = "com.example.radek"
         minSdkVersion(15)
         targetSdkVersion(27)
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "android.support.loadMoviesPage.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
@@ -52,6 +54,7 @@ object Versions {
     const val archRoomVersion = "1.0.0"
     const val pagingVersion = "1.0.0"
     const val retrofitVersion = "2.4.0"
+    const val daggerVersion = "2.16"
 }
 
 dependencies {
@@ -69,11 +72,14 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:${Versions.retrofitVersion}")
     implementation("com.squareup.retrofit2:converter-gson:${Versions.retrofitVersion}")
+    implementation ("com.google.dagger:dagger:${Versions.daggerVersion}")
+
+    kapt("com.google.dagger:dagger-compiler:${Versions.daggerVersion}")
 
     testImplementation("junit:junit:4.12")
 
     val excludeSupportAnnotations: ExternalModuleDependency.() -> Unit = {
         exclude(module = "support-annotations", group = "com.android.support")
     }
-    androidTestImplementation("com.android.support.loadMoviesPage.espresso:espresso-core:3.0.2", excludeSupportAnnotations)
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2", excludeSupportAnnotations)
 }
