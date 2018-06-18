@@ -51,7 +51,7 @@ object Versions {
     const val rulesVersion = "1.0.1"
     const val espressoVersion = "3.0.1"
     const val archLifecycleVersion = "1.1.1"
-    const val archRoomVersion = "1.0.0"
+    const val archRoomVersion = "1.1.0"
     const val pagingVersion = "1.0.0"
     const val retrofitVersion = "2.4.0"
     const val daggerVersion = "2.16"
@@ -68,8 +68,8 @@ dependencies {
 
     implementation("android.arch.lifecycle:extensions:${Versions.archLifecycleVersion}")
     kapt("android.arch.lifecycle:common-java8:${Versions.archLifecycleVersion}")
-//    implementation("android.arch.persistence.room:runtime:${Versions.archRoomVersion}")
-//    kapt("android.arch.persistence.room:compiler:${Versions.archRoomVersion}")
+    implementation("android.arch.persistence.room:runtime:${Versions.archRoomVersion}")
+    kapt("android.arch.persistence.room:compiler:${Versions.archRoomVersion}")
 
     implementation("com.squareup.retrofit2:retrofit:${Versions.retrofitVersion}")
     implementation("com.squareup.retrofit2:converter-gson:${Versions.retrofitVersion}")
