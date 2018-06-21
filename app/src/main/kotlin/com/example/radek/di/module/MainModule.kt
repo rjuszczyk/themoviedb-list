@@ -1,9 +1,13 @@
 package com.example.radek.di.module
 
 import com.example.radek.di.scope.ActivityScope
-import com.example.radek.jobexecutor.MainNetworkRepository
+import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.jobexecutor.PagedDataProvider
 import com.example.radek.movielist.*
+import com.example.radek.movielist.model.MovieItem
+import com.example.radek.network.Api
+import com.example.radek.data.MovieListPagedDataProvider
+import com.example.radek.data.SortOptionsProvider
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.Executor
@@ -14,15 +18,15 @@ class MainModule {
     @Provides
     @ActivityScope
     fun provideMainNetworkRepository(
-            pagedDataProvider: PagedDataProvider<NetResult>
-    ): MainNetworkRepository<NetResult> {
-        return MainNetworkRepository(pagedDataProvider)
+            pagedDataProvider: PagedDataProvider<MovieItem>
+    ): PageProviderExecutor<MovieItem> {
+        return PageProviderExecutor(pagedDataProvider)
     }
 
 
     @Provides
     @ActivityScope
-    fun providePagedDataProvider(api: Api): PagedDataProvider<NetResult> {
+    fun providePagedDataProvider(api: Api): PagedDataProvider<MovieItem> {
         return MovieListPagedDataProvider(api)
     }
 
@@ -41,9 +45,9 @@ class MainModule {
     fun provideMainViewModelFactory(
             sortOptionsProvider: SortOptionsProvider,
             movieListPagedDataProviderFactory: MovieListPagedDataProviderFactory,
-            mainNetworkRepository: MainNetworkRepository<NetResult>,
+            pageProviderExecutor: PageProviderExecutor<MovieItem>,
             mainThreadExecutor: Executor
     ): MainViewModelFactory {
-        return MainViewModelFactory(sortOptionsProvider, movieListPagedDataProviderFactory, mainNetworkRepository, mainThreadExecutor)
+        return MainViewModelFactory(sortOptionsProvider, movieListPagedDataProviderFactory, pageProviderExecutor, mainThreadExecutor)
     }
 }

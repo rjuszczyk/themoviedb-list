@@ -2,7 +2,7 @@ package com.example.radek.di.module
 
 import com.example.radek.di.DiConstants
 import com.example.radek.di.scope.AppScope
-import com.example.radek.movielist.Api
+import com.example.radek.network.Api
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

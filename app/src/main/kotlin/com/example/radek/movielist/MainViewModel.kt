@@ -7,22 +7,25 @@ import android.arch.lifecycle.ViewModel
 import android.arch.paging.DataSource
 import android.arch.paging.PageKeyedDataSource
 import android.arch.paging.PagedList
-import com.example.radek.ChangeObservableProperty
-import com.example.radek.jobexecutor.MainNetworkRepository
+import com.example.radek.common.ChangeObservableProperty
+import com.example.radek.data.SortOptionsProvider
+import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.jobexecutor.State
+import com.example.radek.movielist.model.MovieItem
+import com.example.radek.movielist.model.SortOptionItem
 import java.util.concurrent.Executor
 import kotlin.reflect.KProperty
 
 class MainViewModel(
         sortOptionsProvider : SortOptionsProvider,
         private val movieListPagedDataProviderFactory: MovieListPagedDataProviderFactory,
-        private val mainNetworkRepository: MainNetworkRepository<NetResult>,
+        private val pageProviderExecutor: PageProviderExecutor<MovieItem>,
         private val mainThreadExecutor: Executor
 ) : ViewModel() {
-    val sortOptions = MutableLiveData<List<SortOption>>()
+    val sortOptions = MutableLiveData<List<SortOptionItem>>()
     val sortBy = MutableLiveData<String>()
-    val list:LiveData<PagedList<NetResult>>// = MutableLiveData<PagedList<NetResult>>()
-    val repositoryState : MutableLiveData<State> = mainNetworkRepository.repositoryState
+    val list:LiveData<PagedList<MovieItem>>// = MutableLiveData<PagedList<com.example.radek.movielist.model.MovieItem>>()
+    val repositoryState : MutableLiveData<State> = pageProviderExecutor.repositoryState
 
     val initialValue = "release_date.desc"
 
@@ -35,34 +38,34 @@ class MainViewModel(
     }
 
 
-    private fun preparePagedList(mainThreadExecutor: Executor, sortBy: String): PagedList<NetResult> {
+    private fun preparePagedList(mainThreadExecutor: Executor, sortBy: String): PagedList<MovieItem> {
 
-        val dataSource: DataSource<Int, NetResult>
+        val dataSource: DataSource<Int, MovieItem>
 
-        mainNetworkRepository.changeDataProvider(movieListPagedDataProviderFactory.create(sortBy))
+        pageProviderExecutor.changeDataProvider(movieListPagedDataProviderFactory.create(sortBy))
 
-        dataSource = object : PageKeyedDataSource<Int, NetResult>() {
-            override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, NetResult>) {
+        dataSource = object : PageKeyedDataSource<Int, MovieItem>() {
+            override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, MovieItem>) {
                 val key = 1
-                mainNetworkRepository.loadInitialPage {
+                pageProviderExecutor.loadInitialPage {
                     val nextPage = if (key + 1 < it.totalPages) key + 1 else null
                     callback.onResult(it.list, null, nextPage)
                 }
             }
 
-            override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, NetResult>) {
-                mainNetworkRepository.loadPage(params.key) {
+            override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, MovieItem>) {
+                pageProviderExecutor.loadPage(params.key) {
 //                    val nextPage = if (params.key + 1 < it.totalPages) params.key + 1 else null
                     val nextPage = if (params.key + 1 <= 4) params.key + 1 else null
                     callback.onResult(it.list, nextPage)
                 }
             }
 
-            override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, NetResult>) {
+            override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, MovieItem>) {
                 if (params.key < 1) {
                     callback.onResult(emptyList(), null)
                 } else {
-                    mainNetworkRepository.loadPage(params.key) { netModel ->
+                    pageProviderExecutor.loadPage(params.key) { netModel ->
                         callback.onResult(netModel.list, netModel.page - 1)
                     }
                 }
@@ -76,7 +79,7 @@ class MainViewModel(
     }
 
     fun retry() {
-        mainNetworkRepository.retryFailedJobs()
+        pageProviderExecutor.retryFailedJobs()
     }
 
     var sortOption:String by sortObservable()

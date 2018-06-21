@@ -1,4 +1,4 @@
-package com.example.radek.movielist
+package com.example.radek.common
 
 import android.support.annotation.IdRes
 import android.support.v7.app.AppCompatActivity

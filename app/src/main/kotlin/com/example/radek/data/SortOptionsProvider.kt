@@ -1,7 +1,10 @@
-package com.example.radek.movielist
+package com.example.radek.data
+
+import com.example.radek.data.model.SortOption
+import com.example.radek.movielist.model.SortOptionItem
 
 class SortOptionsProvider {
-    fun provideSortOptionsList(callback: (List<SortOption> ) -> Unit) {
+    fun provideSortOptionsList(callback: (List<SortOptionItem> ) -> Unit) {
         callback.invoke(listOf(
                 SortOption("popularity.asc", "popularity.asc"),
                 SortOption("popularity.desc", "popularity.desc"),

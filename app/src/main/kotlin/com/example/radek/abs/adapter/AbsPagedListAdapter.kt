@@ -1,13 +1,12 @@
-package com.example.radek.movielist.adapter
+package com.example.radek.abs.adapter
 
 import android.arch.paging.PagedListAdapter
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.example.radek.ChangeObservableProperty
+import com.example.radek.common.ChangeObservableProperty
 import com.example.radek.jobexecutor.State
-import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
 abstract class AbsPagedListAdapter<T>(
@@ -67,7 +66,7 @@ abstract class AbsPagedListAdapter<T>(
         }
     }
 
-    override fun onBindViewHolder(holder: AbsPagedListAdapter.MyHolder<T>, position: Int) {
+    override fun onBindViewHolder(holder: MyHolder<T>, position: Int) {
         if (holder is ItemViewHolder<T>) {
             val netResult = getItem(position)
             holder.bind(netResult)

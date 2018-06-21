@@ -9,13 +9,14 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.radek.R
-import com.example.radek.movielist.NetResult
+import com.example.radek.abs.adapter.AbsPagedListAdapter
+import com.example.radek.movielist.model.MovieItem
 
 @SuppressLint("SetTextI18n")
 class MyPagedListAdapter(
         retryListener: RetryListener,
-        diffCallback: DiffUtil.ItemCallback<NetResult>
-) : AbsPagedListAdapter<NetResult>(retryListener, diffCallback) {
+        diffCallback: DiffUtil.ItemCallback<MovieItem>
+) : AbsPagedListAdapter<MovieItem>(retryListener, diffCallback) {
 
     override fun createProgressViewHolder(parent: ViewGroup): ProgressViewHolder {
         val tv = ProgressBar(parent.context)
@@ -24,27 +25,27 @@ class MyPagedListAdapter(
         return ProgressViewHolder(tv)
     }
 
-    override fun createFailedViewHolder(parent: ViewGroup,retryListener: RetryListener): FailedViewHolder<NetResult> {
+    override fun createFailedViewHolder(parent: ViewGroup,retryListener: RetryListener): FailedViewHolder<MovieItem> {
         val tv = Button(parent.context)
         val height = (parent.context.resources.displayMetrics.density*50).toInt()
         tv.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         return MyFailedViewHolder(tv, retryListener)
     }
 
-    override fun createItemViewHolder(parent: ViewGroup): ItemViewHolder<NetResult> {
+    override fun createItemViewHolder(parent: ViewGroup): ItemViewHolder<MovieItem> {
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
 
         return MyItemViewHolder(view )
     }
 
-    class MyItemViewHolder(itemView: View) : ItemViewHolder<NetResult>(itemView) {
+    class MyItemViewHolder(itemView: View) : ItemViewHolder<MovieItem>(itemView) {
         private val title:TextView = itemView.findViewById(R.id.title)
         private val voteCount:TextView = itemView.findViewById(R.id.vote_count)
         private val voteAverage:TextView = itemView.findViewById(R.id.vote_average)
         private val releaseDate:TextView = itemView.findViewById(R.id.release_date)
 
-        override fun bind(item: NetResult?) {
+        override fun bind(item: MovieItem?) {
             if (item != null) {
                 title.text = item.title
                 voteCount.text = item.voteCount
@@ -62,7 +63,7 @@ class MyPagedListAdapter(
     class MyFailedViewHolder(
             itemView: View,
             retryListener: RetryListener
-    ) : FailedViewHolder<NetResult>(itemView) {
+    ) : FailedViewHolder<MovieItem>(itemView) {
 
         init {
             itemView.setOnClickListener({retryListener.retryCalled()})

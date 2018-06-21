@@ -2,6 +2,8 @@ package com.example.radek.jobexecutor
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.Observer
+import com.example.radek.jobexecutor.response.InitialPagedResponse
+import com.example.radek.jobexecutor.response.PagedResponse
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.doAnswer
@@ -20,25 +22,25 @@ import org.mockito.Mockito.never
 
 
 @RunWith(MockitoJUnitRunner::class)
-class MainNetworkRepositoryTest {
+class PageProviderExecutorTest {
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
 
     @Mock
     private lateinit var pagedDataProvider: PagedDataProvider<String>
-    private lateinit var mainNetworkRepository: MainNetworkRepository<String>
+    private lateinit var pageProviderExecutor: PageProviderExecutor<String>
 
     @Before
     fun init() {
-        mainNetworkRepository = MainNetworkRepository(pagedDataProvider)
+        pageProviderExecutor = PageProviderExecutor(pagedDataProvider)
     }
 
     @Test
     fun `when job is started progress status is emitted`() {
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
         val observer = mock<Observer<State>>()
-        mainNetworkRepository.repositoryState.observeForever(observer)
-        mainNetworkRepository.loadInitialPage(callback)
+        pageProviderExecutor.repositoryState.observeForever(observer)
+        pageProviderExecutor.loadInitialPage(callback)
 
         Mockito.verify(observer).onChanged(State.Loading)
     }
@@ -53,8 +55,8 @@ class MainNetworkRepositoryTest {
             onSuccess(result)
         }
         val observer = mock<Observer<State>>()
-        mainNetworkRepository.repositoryState.observeForever(observer)
-        mainNetworkRepository.loadInitialPage(callback)
+        pageProviderExecutor.repositoryState.observeForever(observer)
+        pageProviderExecutor.loadInitialPage(callback)
 
         Mockito.verify(observer).onChanged(State.Loaded)
     }
@@ -70,8 +72,8 @@ class MainNetworkRepositoryTest {
             onFailure(exception)
         }
         val observer = mock<Observer<State>>()
-        mainNetworkRepository.repositoryState.observeForever(observer)
-        mainNetworkRepository.loadInitialPage(callback)
+        pageProviderExecutor.repositoryState.observeForever(observer)
+        pageProviderExecutor.loadInitialPage(callback)
 
         Mockito.verify(observer).onChanged(any<State.Failed>())
     }
@@ -82,9 +84,9 @@ class MainNetworkRepositoryTest {
         val callback2 = mock<(PagedResponse<String>) -> Unit>()
         val errorCaptor = argumentCaptor<(Throwable) -> Unit>()
         val observer = mock<Observer<State>>()
-        mainNetworkRepository.repositoryState.observeForever(observer)
-        mainNetworkRepository.loadInitialPage(callback)
-        mainNetworkRepository.loadPage(2, callback2)
+        pageProviderExecutor.repositoryState.observeForever(observer)
+        pageProviderExecutor.loadInitialPage(callback)
+        pageProviderExecutor.loadPage(2, callback2)
         Mockito.verify(pagedDataProvider).provideInitialData(any(),errorCaptor.capture())
         errorCaptor.lastValue.invoke(Exception())
 
@@ -98,9 +100,9 @@ class MainNetworkRepositoryTest {
         val callback2 = mock<(PagedResponse<String>) -> Unit>()
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
         val observer = mock<Observer<State>>()
-        mainNetworkRepository.repositoryState.observeForever(observer)
-        mainNetworkRepository.loadInitialPage(callback)
-        mainNetworkRepository.loadPage(2, callback2)
+        pageProviderExecutor.repositoryState.observeForever(observer)
+        pageProviderExecutor.loadInitialPage(callback)
+        pageProviderExecutor.loadPage(2, callback2)
         Mockito.verify(pagedDataProvider).provideInitialData(captor.capture(), any())
         captor.lastValue.invoke(result)
         Mockito.verify(observer, never()).onChanged(any<State.Loaded>())
@@ -112,7 +114,7 @@ class MainNetworkRepositoryTest {
         val result = InitialPagedResponse(10, listOf(""))
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
 
-        mainNetworkRepository.loadInitialPage(callback)
+        pageProviderExecutor.loadInitialPage(callback)
         Mockito.verify(pagedDataProvider).provideInitialData(captor.capture(), any())
         captor.lastValue.invoke(result)
         Mockito.verify(callback).invoke(result)
@@ -125,8 +127,8 @@ class MainNetworkRepositoryTest {
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
         val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
 
-        mainNetworkRepository.loadInitialPage(callback)
-        mainNetworkRepository.loadPage(2, callback2)
+        pageProviderExecutor.loadInitialPage(callback)
+        pageProviderExecutor.loadPage(2, callback2)
         Mockito.verify(pagedDataProvider).provideInitialData(captor.capture(), any())
         Mockito.verify(pagedDataProvider, never()).providePageData(eq(2), captor2.capture(), any())
     }
@@ -140,8 +142,8 @@ class MainNetworkRepositoryTest {
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
         val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
 
-        mainNetworkRepository.loadInitialPage(callback)
-        mainNetworkRepository.loadPage(2, callback2)
+        pageProviderExecutor.loadInitialPage(callback)
+        pageProviderExecutor.loadPage(2, callback2)
         Mockito.verify(pagedDataProvider).provideInitialData(captor.capture(), any())
         Mockito.verify(pagedDataProvider, never()).providePageData(eq(2), any(), any())
 
@@ -161,8 +163,8 @@ class MainNetworkRepositoryTest {
         val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
         val errorCaptor = argumentCaptor<(Throwable) -> Unit>()
 
-        mainNetworkRepository.loadInitialPage(callback)
-        mainNetworkRepository.loadPage(2, callback2)
+        pageProviderExecutor.loadInitialPage(callback)
+        pageProviderExecutor.loadPage(2, callback2)
         Mockito.verify(pagedDataProvider).provideInitialData(any(), errorCaptor.capture())
         Mockito.verify(pagedDataProvider, never()).providePageData(eq(2), any(), any())
         errorCaptor.lastValue.invoke(Exception())
@@ -181,8 +183,8 @@ class MainNetworkRepositoryTest {
         val errorCaptor = argumentCaptor<(Throwable) -> Unit>()
         val errorCaptor2 = argumentCaptor<(Throwable) -> Unit>()
 
-        mainNetworkRepository.loadInitialPage(callback)
-        mainNetworkRepository.loadPage(2, callback2)
+        pageProviderExecutor.loadInitialPage(callback)
+        pageProviderExecutor.loadPage(2, callback2)
         Mockito.verify(pagedDataProvider).provideInitialData(any(), errorCaptor.capture())
         Mockito.verify(pagedDataProvider, never()).providePageData(eq(2), any(), any())
         errorCaptor.lastValue.invoke(Exception())
@@ -191,7 +193,7 @@ class MainNetworkRepositoryTest {
         errorCaptor2.lastValue.invoke(Exception())
 
         Mockito.clearInvocations(pagedDataProvider)
-        mainNetworkRepository.retryFailedJobs()
+        pageProviderExecutor.retryFailedJobs()
         Mockito.verify(pagedDataProvider).provideInitialData(any(), any())
     }
 }

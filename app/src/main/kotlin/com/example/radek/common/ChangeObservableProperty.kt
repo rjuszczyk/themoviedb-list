@@ -1,4 +1,4 @@
-package com.example.radek
+package com.example.radek.common
 
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty

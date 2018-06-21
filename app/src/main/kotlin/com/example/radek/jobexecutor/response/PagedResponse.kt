@@ -1,4 +1,4 @@
-package com.example.radek.jobexecutor
+package com.example.radek.jobexecutor.response
 
 data class PagedResponse<T>(
         val totalPages: Int,

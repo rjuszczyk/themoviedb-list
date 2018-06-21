@@ -3,9 +3,11 @@ package com.example.radek.movielist
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.Observer
 import android.arch.paging.PagedList
-import com.example.radek.jobexecutor.InitialPagedResponse
-import com.example.radek.jobexecutor.MainNetworkRepository
+import com.example.radek.data.SortOptionsProvider
+import com.example.radek.jobexecutor.response.InitialPagedResponse
+import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.jobexecutor.PagedDataProvider
+import com.example.radek.network.model.Movie
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.mock
@@ -25,27 +27,27 @@ import java.util.concurrent.Executor
 class MainViewModelTest {
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
-    val fakeItem = NetResult(0, "", "", "", "")
+    val fakeItem = Movie(0, "", "", "", "")
     @Mock
-    lateinit var pagedDataProvider: PagedDataProvider<NetResult>
+    lateinit var pagedDataProvider: PagedDataProvider<Movie>
     @Mock
     lateinit var movieListPagedDataProviderFactory: MovieListPagedDataProviderFactory
     @Mock
     lateinit var sortOptionsProvider : SortOptionsProvider
     lateinit var mainViewModel: MainViewModel
-    lateinit var mainNetworkRepository: MainNetworkRepository<NetResult>
+    lateinit var pageProviderExecutor: PageProviderExecutor<Movie>
 
     @Before
     fun setup() {
-        mainNetworkRepository = MainNetworkRepository(pagedDataProvider)
+        pageProviderExecutor = PageProviderExecutor(pagedDataProvider)
         Mockito.`when`(movieListPagedDataProviderFactory.create(any())).thenReturn(pagedDataProvider)
         val executor = Executor { p0 -> p0.run {  } }
-        mainViewModel = MainViewModel(sortOptionsProvider, movieListPagedDataProviderFactory, mainNetworkRepository, executor)
+        mainViewModel = MainViewModel(sortOptionsProvider, movieListPagedDataProviderFactory, pageProviderExecutor, executor)
     }
 
     @Test
     fun `view model observes repository`() {
-        assertEquals(mainViewModel.repositoryState, mainNetworkRepository.repositoryState)
+        assertEquals(mainViewModel.repositoryState, pageProviderExecutor.repositoryState)
     }
 
     @Test
@@ -56,13 +58,13 @@ class MainViewModelTest {
 
     @Test
     fun `emits result when loaded`() {
-        val observer = mock<Observer<PagedList<NetResult>>>()
+        val observer = mock<Observer<PagedList<Movie>>>()
         mainViewModel.list.observeForever(observer)
-        val captor = argumentCaptor<(InitialPagedResponse<NetResult>) -> Unit>()
+        val captor = argumentCaptor<(InitialPagedResponse<Movie>) -> Unit>()
         verify(pagedDataProvider).provideInitialData(captor.capture(), any())
 
-        val loadedList:List<NetResult> = listOf(fakeItem)
-        val result = InitialPagedResponse(10,loadedList)
+        val loadedList:List<Movie> = listOf(fakeItem)
+        val result = InitialPagedResponse(10, loadedList)
 
         captor.lastValue.invoke(result)
 

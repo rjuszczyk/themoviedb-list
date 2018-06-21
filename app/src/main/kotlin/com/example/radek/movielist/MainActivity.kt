@@ -3,7 +3,6 @@ package com.example.radek.movielist
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,13 +11,14 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import com.example.radek.R
-import com.example.radek.movielist.adapter.AbsPagedListAdapter
+import com.example.radek.abs.adapter.AbsPagedListAdapter
 import com.example.radek.movielist.adapter.MyPagedListAdapter
-import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-import android.R.array
 import android.widget.AdapterView
+import com.example.radek.common.bindView
+import com.example.radek.movielist.model.MovieItem
+import com.example.radek.movielist.model.SortOptionItem
 
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -53,13 +53,25 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private fun initSpinner() {
 
-        val adapter = ArrayAdapter<SortOption>(this, android.R.layout.simple_spinner_item)
+        val adapter = ArrayAdapter<SortOptionItem>(this, android.R.layout.simple_spinner_item)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         changeSortBy.adapter = adapter
-        mainViewModel.sortOptions.observe(this, Observer<List<SortOption>> {
+        mainViewModel.sortOptions.observe(this, Observer<List<SortOptionItem>> {
             adapter.clear()
-            adapter.addAll(it)
+            it?.let {
+                val printableList = it.map { object : SortOptionItem {
+                    override val parameter: String
+                        get() = it.name
+                    override val name: String
+                        get() = it.parameter
+
+                    override fun toString(): String {
+                        return name
+                    }
+                } }
+                adapter.addAll(printableList)
+            }
         })
 
         changeSortBy.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -83,12 +95,12 @@ class MainActivity : DaggerAppCompatActivity() {
                         mainViewModel.retry()
                     }
                 },
-                object : DiffUtil.ItemCallback<NetResult>() {
-                    override fun areItemsTheSame(oldItem: NetResult?, newItem: NetResult?): Boolean {
+                object : DiffUtil.ItemCallback<MovieItem>() {
+                    override fun areItemsTheSame(oldItem: MovieItem?, newItem: MovieItem?): Boolean {
                         return oldItem == newItem
                     }
 
-                    override fun areContentsTheSame(oldItem: NetResult?, newItem: NetResult?): Boolean {
+                    override fun areContentsTheSame(oldItem: MovieItem?, newItem: MovieItem?): Boolean {
                         return oldItem == newItem
                     }
                 })

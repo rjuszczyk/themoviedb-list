@@ -1,8 +1,10 @@
 package com.example.radek.jobexecutor
 
 import android.arch.lifecycle.MutableLiveData
+import com.example.radek.jobexecutor.response.InitialPagedResponse
+import com.example.radek.jobexecutor.response.PagedResponse
 
-class MainNetworkRepository<T>(
+class PageProviderExecutor<T>(
         private var pagedDataProvider: PagedDataProvider<T>
 ) {
     private val jobsList = ArrayList<Job<*, T>>()
@@ -96,7 +98,6 @@ class MainNetworkRepository<T>(
         }
 
         repositoryState.postValue(state)
-        //repositoryStatusCallback(state)
     }
 }
 
