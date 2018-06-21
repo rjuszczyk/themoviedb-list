@@ -4,5 +4,5 @@ sealed class State {
     object NotStarted : State()
     object Loading : State()
     object Loaded : State()
-    object Failed : State()
+    class Failed(val cause:Throwable) : State()
 }

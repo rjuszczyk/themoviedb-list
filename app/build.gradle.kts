@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
+    kotlin("android")
+    kotlin("kapt")
     //id("kotlin-android-extensions")
 }
 
@@ -77,7 +77,11 @@ dependencies {
     implementation("com.google.dagger:dagger-android:${Versions.daggerVersion}")
     implementation("com.google.dagger:dagger-android-support:${Versions.daggerVersion}")
     kapt("com.google.dagger:dagger-compiler:${Versions.daggerVersion}")
+    kapt("com.google.dagger:dagger-android-processor:${Versions.daggerVersion}")
 
+    testImplementation("com.nhaarman:mockito-kotlin:1.5.0")
+    testImplementation("android.arch.core:core-testing:${Versions.archLifecycleVersion}")
+    testImplementation("org.mockito:mockito-core:2.19.0")
     testImplementation("junit:junit:4.12")
 
     val excludeSupportAnnotations: ExternalModuleDependency.() -> Unit = {

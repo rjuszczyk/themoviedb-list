@@ -1,14 +1,18 @@
 package com.example.radek.jobexecutor
 
+import android.arch.lifecycle.MutableLiveData
+
 class MainNetworkRepository<T>(
-
-        private val pagedDataProvider: PagedDataProvider<T>
+        private var pagedDataProvider: PagedDataProvider<T>
 ) {
-    private lateinit var repositoryStatusCallback: (State) -> Unit
     private val jobsList = ArrayList<Job<*, T>>()
+    internal var repositoryState = MutableLiveData<State>()
 
-    fun init(repositoryStatusCallback: (State) -> Unit) {
-        this.repositoryStatusCallback = repositoryStatusCallback
+    fun changeDataProvider(pagedDataProvider: PagedDataProvider<T>) {
+        this.pagedDataProvider.dispose()
+        this.pagedDataProvider = pagedDataProvider
+        jobsList.clear()
+        repositoryState.postValue(State.NotStarted)
     }
 
     fun loadInitialPage(callback: (InitialPagedResponse<T>) -> Unit) {
@@ -22,7 +26,7 @@ class MainNetworkRepository<T>(
     }
 
     fun retryFailedJobs() {
-        jobsList.filter { it.state == State.Failed }
+        jobsList.filter { it.state is State.Failed }
                 .forEach { it.state = State.NotStarted }
         executeNextIfPossible()
     }
@@ -38,56 +42,61 @@ class MainNetworkRepository<T>(
     private fun execute(job: Job<*, T>) {
         job.state = State.Loading
         updateCallback()
-        if (job is InitialJob<*>) {
-            val j = job as InitialJob<T>
+        if (job is InitialJob<T>) {
             pagedDataProvider.provideInitialData(
                     { response ->
-                        j.state = State.Loaded
-                        j.callback.invoke(response)
+                        job.state = State.Loaded
+                        job.callback.invoke(response)
 
                         jobsList.remove(job)
-                        updateCallback()
+                        updateCallbackAfterSuccess()
                         executeNextIfPossible()
                     },
-                    { _ ->
-                        job.state = State.Failed
+                    { throwable ->
+                        job.state = State.Failed(throwable)
                         updateCallback()
                         executeNextIfPossible()
                     }
             )
-        } else if (job is PageJob<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val j = job as PageJob<T>
-            pagedDataProvider.providePageData(j.page,
+        } else if (job is PageJob<T>) {
+            pagedDataProvider.providePageData(job.page,
                     { response ->
-                        j.state = State.Loaded
-                        j.callback.invoke(response)
+                        job.state = State.Loaded
+                        job.callback.invoke(response)
                         jobsList.remove(job)
-                        updateCallback()
-                        executeNextIfPossible()
+                        updateCallbackAfterSuccess()
                     },
-                    { _ ->
-                        job.state = State.Failed
+                    { throwable ->
+                        job.state = State.Failed(throwable)
                         updateCallback()
                         executeNextIfPossible()
                     })
         }
     }
 
+    private fun updateCallbackAfterSuccess() {
+        if (jobsList.isEmpty()) {
+            repositoryState.postValue(State.Loaded)
+        } else {
+            updateCallback()
+            executeNextIfPossible()
+        }
+    }
+
     private fun updateCallback() {
         var state: State = State.NotStarted
-        if (jobsList.any { it.state == State.Loading }) {
+        if (jobsList.any { it.state == State.Loading || it.state == State.NotStarted }) {
             state = State.Loading
         }
 
         if (state != State.Loading) {
-            //state = jobsList.firstOrNull({ it.state == State.Failed })?.state?:state
-            if (jobsList.any { it.state == State.Failed }) {
-                state = State.Failed
+            jobsList.firstOrNull { it.state is State.Failed }?.let {
+                state = it.state
             }
         }
 
-        repositoryStatusCallback(state)
+        repositoryState.postValue(state)
+        //repositoryStatusCallback(state)
     }
 }
 
