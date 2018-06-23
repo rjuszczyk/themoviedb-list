@@ -3,18 +3,16 @@ package com.example.radek.data
 import com.example.radek.jobexecutor.*
 import com.example.radek.jobexecutor.response.InitialPagedResponse
 import com.example.radek.jobexecutor.response.PagedResponse
-import com.example.radek.movielist.model.MovieItem
-import com.example.radek.network.Api
-import com.example.radek.network.model.MoviesResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.radek.model.MovieItem
+import com.example.radek.model.MoviesPage
+import com.example.radek.model.SortOptionParameter
+import com.example.radek.model.provider.MoviesPageProvider
 
 class MovieListPagedDataProvider(
-        private val api: Api,
-        private val sortBy:String = "release_date.desc"
+        private val moviesPageProvider: MoviesPageProvider,
+        private val sortBy:SortOptionParameter
 ) : PagedDataProvider<MovieItem> {
-    private val jobCalls = ArrayList<Call<MoviesResponse>>()
+    private val jobCalls = ArrayList<MoviesPageProvider.Cancelable>()
     override fun dispose() {
         for (jobCall in jobCalls) {
             jobCall.cancel()
@@ -26,20 +24,19 @@ class MovieListPagedDataProvider(
             onLoaded: (InitialPagedResponse<MovieItem>) -> Unit,
             onFailed: (Throwable) -> Unit
     ) {
-        val call = api.loadMoviesPage(1, sortBy)
-        jobCalls.add(call)
-        call.enqueue(object : Callback<MoviesResponse> {
-            override fun onFailure(call: Call<MoviesResponse>?, t: Throwable?) {
-                jobCalls.remove(call)
-                onFailed(t!!)
+        val cancelable = moviesPageProvider.provideMoviePage(1, sortBy, object : MoviesPageProvider.Callback {
+            override fun onSuccess(cancelable: MoviesPageProvider.Cancelable, moviesPage: MoviesPage) {
+                jobCalls.remove(cancelable)
+                onLoaded(InitialPagedResponse(moviesPage.totalPages, moviesPage.pages))
             }
 
-            override fun onResponse(call: Call<MoviesResponse>?, response: Response<MoviesResponse>?) {
-                jobCalls.remove(call)
-                val netModel = response!!.body()!!
-                onLoaded(InitialPagedResponse(netModel.total_pages, netModel.results))
+            override fun onFailed(cancelable: MoviesPageProvider.Cancelable, throwable: Throwable) {
+                jobCalls.remove(cancelable)
+                onFailed(throwable)
             }
         })
+
+        jobCalls.add(cancelable)
     }
 
     override fun providePageData(
@@ -47,19 +44,18 @@ class MovieListPagedDataProvider(
             onLoaded: (PagedResponse<MovieItem>) -> Unit,
             onFailed: (Throwable) -> Unit
     ) {
-        val call = api.loadMoviesPage(page, sortBy)
-        jobCalls.add(call)
-        call.enqueue(object : Callback<MoviesResponse> {
-            override fun onFailure(call: Call<MoviesResponse>?, t: Throwable?) {
-                jobCalls.remove(call)
-                onFailed(t!!)
+        val cancelable = moviesPageProvider.provideMoviePage(page, sortBy, object : MoviesPageProvider.Callback {
+            override fun onSuccess(cancelable: MoviesPageProvider.Cancelable, moviesPage: MoviesPage) {
+                jobCalls.remove(cancelable)
+                onLoaded(PagedResponse(moviesPage.totalPages, moviesPage.page, moviesPage.pages))
             }
 
-            override fun onResponse(call: Call<MoviesResponse>?, response: Response<MoviesResponse>?) {
-                jobCalls.remove(call)
-                val netModel = response!!.body()!!
-                onLoaded(PagedResponse(netModel.total_pages, netModel.page, netModel.results))
+            override fun onFailed(cancelable: MoviesPageProvider.Cancelable, throwable: Throwable) {
+                jobCalls.remove(cancelable)
+                onFailed(throwable)
             }
         })
+
+        jobCalls.add(cancelable)
     }
 }

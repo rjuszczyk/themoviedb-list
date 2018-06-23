@@ -59,6 +59,10 @@ object Versions {
 
 dependencies {
     implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
+    implementation(project(":jobexecutor"))
+    implementation(project(":data"))
+    implementation(project(":model"))
+
     implementation("com.android.support:appcompat-v7:${Versions.supportLibVersion}")
     implementation("com.android.support:cardview-v7:${Versions.supportLibVersion}")
     implementation("com.android.support:recyclerview-v7:${Versions.supportLibVersion}")
@@ -71,8 +75,7 @@ dependencies {
     implementation("android.arch.persistence.room:runtime:${Versions.archRoomVersion}")
     kapt("android.arch.persistence.room:compiler:${Versions.archRoomVersion}")
 
-    implementation("com.squareup.retrofit2:retrofit:${Versions.retrofitVersion}")
-    implementation("com.squareup.retrofit2:converter-gson:${Versions.retrofitVersion}")
+
     implementation ("com.google.dagger:dagger:${Versions.daggerVersion}")
     implementation("com.google.dagger:dagger-android:${Versions.daggerVersion}")
     implementation("com.google.dagger:dagger-android-support:${Versions.daggerVersion}")
