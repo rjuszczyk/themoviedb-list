@@ -1,7 +1,7 @@
-package com.example.radek.data
+package com.example.radek.movielist.data
 
-import com.example.radek.data.model.SortOption
-import com.example.radek.data.model.SortOptionItem
+import com.example.radek.movielist.data.model.SortOption
+import com.example.radek.movielist.data.model.SortOptionItem
 import com.example.radek.model.SortOptionParameter
 import com.example.radek.model.provider.SortOptionsProvider
 

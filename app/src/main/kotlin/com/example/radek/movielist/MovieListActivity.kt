@@ -7,19 +7,20 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import com.example.radek.R
 import com.example.radek.abs.adapter.AbsPagedListAdapter
-import com.example.radek.movielist.adapter.MovieListPagedAdapter
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
-import android.widget.AdapterView
 import com.example.radek.common.bindView
 import com.example.radek.model.MovieItem
-import com.example.radek.data.model.SortOptionItem
 import com.example.radek.model.SortOptionParameter
+import com.example.radek.moviedetail.MovieDetailsActivity
+import com.example.radek.movielist.adapter.MovieListPagedAdapter
+import com.example.radek.movielist.data.model.SortOptionItem
+import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
 
 class MovieListActivity : DaggerAppCompatActivity() {
@@ -86,11 +87,6 @@ class MovieListActivity : DaggerAppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
         pagedAdapter = MovieListPagedAdapter(
-                object : AbsPagedListAdapter.RetryListener {
-                    override fun retryCalled() {
-                        movieListViewModel.retry()
-                    }
-                },
                 object : DiffUtil.ItemCallback<MovieItem>() {
                     override fun areItemsTheSame(oldItem: MovieItem?, newItem: MovieItem?): Boolean {
                         return oldItem == newItem
@@ -99,7 +95,19 @@ class MovieListActivity : DaggerAppCompatActivity() {
                     override fun areContentsTheSame(oldItem: MovieItem?, newItem: MovieItem?): Boolean {
                         return oldItem == newItem
                     }
-                })
+                },
+                object : AbsPagedListAdapter.RetryListener {
+                    override fun retryCalled() {
+                        movieListViewModel.retry()
+                    }
+                },
+                object : MovieListPagedAdapter.MovieItemClickedListener {
+                    override fun onItemClicked(movieItem: MovieItem) {
+                        startActivity(MovieDetailsActivity.getStartIntent(this@MovieListActivity, movieItem))
+                    }
+
+                }
+        )
 
         recyclerView.adapter = pagedAdapter
     }

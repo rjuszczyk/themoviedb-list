@@ -1,6 +1,6 @@
-package com.example.radek.movielist
+package com.example.radek.movielist.data
 
-import com.example.radek.data.MovieListPagedDataProvider
+import com.example.radek.movielist.data.MovieListPagedDataProvider
 import com.example.radek.jobexecutor.PagedDataProvider
 import com.example.radek.model.MovieItem
 import com.example.radek.model.SortOptionParameter

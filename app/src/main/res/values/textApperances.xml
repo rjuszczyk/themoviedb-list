@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="TextAppearance.AppCompat.ErrorMessage">
+        <item name="android:textColor">?attr/errorTextColor</item>
+    </style>
+
+</resources>

@@ -2,7 +2,8 @@ package com.example.radek.di.module
 
 import com.example.radek.di.DiConstants
 import com.example.radek.di.scope.AppScope
-import com.example.radek.data.network.Api
+import com.example.radek.movielist.data.network.Api
+import com.example.radek.movielist.data.network.OkHttpClientCreator
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -44,8 +45,14 @@ class NetworkModule {
 
     @Provides
     @AppScope
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient()
+    fun provideOkHttpClientCreator(): OkHttpClientCreator {
+        return OkHttpClientCreator()
+    }
+
+    @Provides
+    @AppScope
+    fun provideOkHttpClient(okHttpClientCreator: OkHttpClientCreator): OkHttpClient {
+        return okHttpClientCreator.create()
     }
 
     @Provides

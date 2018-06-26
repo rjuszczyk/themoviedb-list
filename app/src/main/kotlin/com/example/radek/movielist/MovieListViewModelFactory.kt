@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.model.MovieItem
 import com.example.radek.model.provider.SortOptionsProvider
+import com.example.radek.movielist.data.MovieListPagedDataProviderFactory
 import java.util.concurrent.Executor
 
 class MovieListViewModelFactory(

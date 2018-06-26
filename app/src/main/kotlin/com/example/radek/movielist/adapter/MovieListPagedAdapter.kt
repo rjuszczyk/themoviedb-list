@@ -14,9 +14,11 @@ import com.example.radek.model.MovieItem
 
 @SuppressLint("SetTextI18n")
 class MovieListPagedAdapter(
+        diffCallback: DiffUtil.ItemCallback<MovieItem>,
         retryListener: RetryListener,
-        diffCallback: DiffUtil.ItemCallback<MovieItem>
-) : AbsPagedListAdapter<MovieItem>(retryListener, diffCallback) {
+        private val itemClickedListener: MovieItemClickedListener
+
+) : AbsPagedListAdapter<MovieItem>(diffCallback, retryListener) {
 
     override fun createProgressViewHolder(parent: ViewGroup): ProgressViewHolder {
         val tv = ProgressBar(parent.context)
@@ -36,10 +38,12 @@ class MovieListPagedAdapter(
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
 
-        return MyItemViewHolder(view )
+        return MyItemViewHolder(view, itemClickedListener)
     }
 
-    class MyItemViewHolder(itemView: View) : ItemViewHolder<MovieItem>(itemView) {
+    class MyItemViewHolder(
+            itemView: View,
+            private val itemClickedListener: MovieItemClickedListener) : ItemViewHolder<MovieItem>(itemView) {
         private val title:TextView = itemView.findViewById(R.id.title)
         private val voteCount:TextView = itemView.findViewById(R.id.vote_count)
         private val voteAverage:TextView = itemView.findViewById(R.id.vote_average)
@@ -51,11 +55,15 @@ class MovieListPagedAdapter(
                 voteCount.text = item.voteCount
                 voteAverage.text = item.voteAverage
                 releaseDate.text = item.releaseDate
+                itemView.setOnClickListener {
+                    itemClickedListener.onItemClicked(item)
+                }
             } else {
                 title.text = "loading"
                 voteCount.text = ""
                 voteAverage.text = ""
                 releaseDate.text = ""
+                itemView.setOnClickListener {  }
             }
         }
     }
@@ -70,7 +78,11 @@ class MovieListPagedAdapter(
         }
 
         override fun bind(cause: Throwable) {
-            (itemView as TextView).text = cause.message
+            (itemView as TextView).text = cause.localizedMessage
         }
+    }
+
+    interface MovieItemClickedListener {
+        fun onItemClicked(movieItem: MovieItem)
     }
 }

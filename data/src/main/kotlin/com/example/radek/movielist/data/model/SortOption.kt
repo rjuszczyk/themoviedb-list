@@ -1,4 +1,4 @@
-package com.example.radek.data.model
+package com.example.radek.movielist.data.model
 
 import com.example.radek.model.SortOptionParameter
 

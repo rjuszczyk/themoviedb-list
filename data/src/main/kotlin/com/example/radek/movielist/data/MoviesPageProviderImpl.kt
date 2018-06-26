@@ -1,7 +1,7 @@
-package com.example.radek.data
+package com.example.radek.movielist.data
 
-import com.example.radek.data.network.Api
-import com.example.radek.data.network.model.MoviesResponse
+import com.example.radek.movielist.data.network.Api
+import com.example.radek.movielist.data.network.model.MoviesResponse
 import com.example.radek.model.MovieItem
 import com.example.radek.model.MoviesPage
 import com.example.radek.model.SortOptionParameter

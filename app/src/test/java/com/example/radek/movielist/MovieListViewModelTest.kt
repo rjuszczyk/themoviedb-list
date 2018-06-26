@@ -3,11 +3,12 @@ package com.example.radek.movielist
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.Observer
 import android.arch.paging.PagedList
-import com.example.radek.data.SortOptionsProvider
+import com.example.radek.movielist.data.SortOptionsProvider
 import com.example.radek.jobexecutor.response.InitialPagedResponse
 import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.jobexecutor.PagedDataProvider
-import com.example.radek.data.network.model.Movie
+import com.example.radek.movielist.data.MovieListPagedDataProviderFactory
+import com.example.radek.movielist.data.network.model.Movie
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.mock

@@ -1,21 +1,21 @@
 package com.example.radek.di.module
 
-import com.example.radek.data.MoviesPageProviderImpl
-import com.example.radek.data.SortOptionsProviderImpl
-import com.example.radek.data.network.Api
+import com.example.radek.movielist.data.MoviesPageProviderImpl
+import com.example.radek.movielist.data.SortOptionsProviderImpl
+import com.example.radek.movielist.data.network.Api
 import com.example.radek.di.scope.ActivityScope
 import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.model.MovieItem
 import com.example.radek.model.provider.MoviesPageProvider
 import com.example.radek.model.provider.SortOptionsProvider
 import com.example.radek.movielist.MovieListViewModelFactory
-import com.example.radek.movielist.MovieListPagedDataProviderFactory
+import com.example.radek.movielist.data.MovieListPagedDataProviderFactory
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.Executor
 
 @Module
-class MainModule {
+class MovieListModule {
 
     @Provides
     @ActivityScope

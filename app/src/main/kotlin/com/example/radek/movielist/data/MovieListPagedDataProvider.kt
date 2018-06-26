@@ -1,4 +1,4 @@
-package com.example.radek.data
+package com.example.radek.movielist.data
 
 import com.example.radek.jobexecutor.*
 import com.example.radek.jobexecutor.response.InitialPagedResponse

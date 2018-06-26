@@ -10,8 +10,8 @@ import com.example.radek.jobexecutor.State
 import kotlin.reflect.KProperty
 
 abstract class AbsPagedListAdapter<T>(
-        private val retryListener: RetryListener,
-        diffCallback: DiffUtil.ItemCallback<T>
+        diffCallback: DiffUtil.ItemCallback<T>,
+        private val retryListener: RetryListener
 ) : PagedListAdapter<T, AbsPagedListAdapter.MyHolder<T>>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder<T> {

@@ -11,9 +11,10 @@ import com.example.radek.common.ChangeObservableProperty
 import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.jobexecutor.State
 import com.example.radek.model.MovieItem
-import com.example.radek.data.model.SortOptionItem
+import com.example.radek.movielist.data.model.SortOptionItem
 import com.example.radek.model.SortOptionParameter
 import com.example.radek.model.provider.SortOptionsProvider
+import com.example.radek.movielist.data.MovieListPagedDataProviderFactory
 import java.util.concurrent.Executor
 import kotlin.reflect.KProperty
 
