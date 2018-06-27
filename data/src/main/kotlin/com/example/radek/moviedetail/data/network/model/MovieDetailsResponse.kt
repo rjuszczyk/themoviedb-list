@@ -1,4 +1,4 @@
-package com.example.radek.movielist.data.network.model
+package com.example.radek.moviedetail.data.network.model
 
 import com.example.radek.model.MovieDetailsItem
 import com.google.gson.annotations.SerializedName

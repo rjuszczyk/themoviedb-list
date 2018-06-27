@@ -3,10 +3,10 @@ package com.example.radek.moviedetail
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.radek.model.MovieDetailsItem
-import com.example.radek.model.provider.MovieDetailProvider
+import com.example.radek.model.provider.MovieDetailsProvider
 
 class MovieDetailsViewModel(
-        private val movieDetailProvider: MovieDetailProvider,
+        private val movieDetailsProvider: MovieDetailsProvider,
         private val movieItemId: Int
 ) : ViewModel() {
     val movieDetailsItem = MutableLiveData<MovieDetailsItem>()
@@ -18,7 +18,7 @@ class MovieDetailsViewModel(
 
     private fun loadMovieDetails() {
         state.postValue(State.Loading)
-        movieDetailProvider.provideMovieDetails(movieItemId, object : MovieDetailProvider.Callback {
+        movieDetailsProvider.provideMovieDetails(movieItemId, object : MovieDetailsProvider.Callback {
             override fun onSuccess(movieDetailsItem: MovieDetailsItem) {
                 this@MovieDetailsViewModel.movieDetailsItem.postValue(movieDetailsItem)
                 state.postValue(State.Loaded)

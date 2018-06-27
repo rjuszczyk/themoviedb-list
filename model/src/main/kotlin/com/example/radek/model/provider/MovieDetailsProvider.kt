@@ -2,7 +2,7 @@ package com.example.radek.model.provider
 
 import com.example.radek.model.MovieDetailsItem
 
-interface MovieDetailProvider {
+interface MovieDetailsProvider {
     fun provideMovieDetails(movieItemId: Int, callback: Callback)
 
     interface Callback {

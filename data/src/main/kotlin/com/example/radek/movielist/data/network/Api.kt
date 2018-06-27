@@ -1,6 +1,6 @@
 package com.example.radek.movielist.data.network
 
-import com.example.radek.movielist.data.network.model.MovieDetailsResponse
+import com.example.radek.moviedetail.data.network.model.MovieDetailsResponse
 import com.example.radek.movielist.data.network.model.MoviesResponse
 import retrofit2.Call
 import retrofit2.http.GET

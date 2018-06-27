@@ -1,14 +1,14 @@
-package com.example.radek.movielist.data
+package com.example.radek.moviedetail.data
 
-import com.example.radek.model.provider.MovieDetailProvider
+import com.example.radek.model.provider.MovieDetailsProvider
 import com.example.radek.movielist.data.network.Api
-import com.example.radek.movielist.data.network.model.MovieDetailsResponse
+import com.example.radek.moviedetail.data.network.model.MovieDetailsResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MovieDetailProviderImpl(val api: Api): MovieDetailProvider {
-    override fun provideMovieDetails(movieItemId: Int, callback: MovieDetailProvider.Callback) {
+class MovieDetailsProviderImpl(val api: Api): MovieDetailsProvider {
+    override fun provideMovieDetails(movieItemId: Int, callback: MovieDetailsProvider.Callback) {
         api.loadMovieDetails(movieItemId).enqueue(object:Callback<MovieDetailsResponse>{
             override fun onResponse(call: Call<MovieDetailsResponse>, response: Response<MovieDetailsResponse>) {
                 response.body()?.let {
