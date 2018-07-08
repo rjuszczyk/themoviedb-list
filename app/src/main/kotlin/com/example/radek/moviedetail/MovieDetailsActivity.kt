@@ -18,12 +18,12 @@ import javax.inject.Inject
 class MovieDetailsActivity : DaggerAppCompatActivity() {
     @Inject lateinit var movieDetailsViewModelFactoryCreator: MovieDetailsViewModelFactoryCreator
 
-    val movieItemId : Int by lazy {
+    private val movieItemId : Int by lazy {
         if(!intent.hasExtra(EXTRA_MOVIE_ITEM_ID)) throw IllegalArgumentException("Activity should be started using getStartIntent method only!")
         intent.getIntExtra(EXTRA_MOVIE_ITEM_ID, -1)
     }
 
-    val movieDetailViewModel: MovieDetailsViewModel by lazy{
+    private val movieDetailViewModel: MovieDetailsViewModel by lazy{
         ViewModelProviders.of(this@MovieDetailsActivity, movieDetailsViewModelFactoryCreator.create(movieItemId)).get(MovieDetailsViewModel::class.java)
     }
 
@@ -36,39 +36,17 @@ class MovieDetailsActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
 
-        retry.setOnClickListener({
+        retry.setOnClickListener {
             movieDetailViewModel.retryLoading()
-        })
+        }
 
-        movieDetailViewModel.state.observe(this, Observer {
+        movieDetailViewModel.loadingState.observe(this, Observer {
             it!!.let{
                 when (it) {
-                    State.Loading -> {
-                        progressBar.visibility = View.VISIBLE
-                        errorMessage.visibility = View.GONE
-                        retry.visibility = View.GONE
-                        description.visibility = View.GONE
-                    }
-                    State.Loaded -> {
-                        progressBar.visibility = View.GONE
-                        errorMessage.visibility = View.GONE
-                        retry.visibility = View.GONE
-                        description.visibility = View.VISIBLE
-                    }
-                    State.NotStarted -> {
-                        progressBar.visibility = View.GONE
-                        errorMessage.visibility = View.GONE
-                        retry.visibility = View.GONE
-                        description.visibility = View.GONE
-                    }
-                    is State.Failed -> {
-                        progressBar.visibility = View.GONE
-                        errorMessage.visibility = View.VISIBLE
-                        retry.visibility = View.VISIBLE
-                        description.visibility = View.GONE
-
-                        errorMessage.text = it.cause.localizedMessage
-                    }
+                    LoadingState.Loading -> showLoadingState()
+                    LoadingState.Loaded -> showLoadedState()
+                    LoadingState.NotStarted -> showNotStartedState()
+                    is LoadingState.Failed -> showFailedState(it)
                 }
             }
         })
@@ -80,9 +58,38 @@ class MovieDetailsActivity : DaggerAppCompatActivity() {
         })
     }
 
+    private fun showFailedState(it: LoadingState.Failed) {
+        progressBar.visibility = View.GONE
+        errorMessage.visibility = View.VISIBLE
+        retry.visibility = View.VISIBLE
+        description.visibility = View.GONE
+
+        errorMessage.text = it.cause.localizedMessage
+    }
+
+    private fun showNotStartedState() {
+        progressBar.visibility = View.GONE
+        errorMessage.visibility = View.GONE
+        retry.visibility = View.GONE
+        description.visibility = View.GONE
+    }
+
+    private fun showLoadedState() {
+        progressBar.visibility = View.GONE
+        errorMessage.visibility = View.GONE
+        retry.visibility = View.GONE
+        description.visibility = View.VISIBLE
+    }
+
+    private fun showLoadingState() {
+        progressBar.visibility = View.VISIBLE
+        errorMessage.visibility = View.GONE
+        retry.visibility = View.GONE
+        description.visibility = View.GONE
+    }
 
     companion object {
-        val EXTRA_MOVIE_ITEM_ID = "EXTRA_MOVIE_ITEM_ID"
+        const val EXTRA_MOVIE_ITEM_ID = "EXTRA_MOVIE_ITEM_ID"
         fun getStartIntent(context: Context, movieItem:MovieItem): Intent {
             val intent = Intent(context, MovieDetailsActivity::class.java)
             intent.putExtra(EXTRA_MOVIE_ITEM_ID, movieItem.id)

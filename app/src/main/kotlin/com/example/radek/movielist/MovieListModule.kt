@@ -1,14 +1,13 @@
-package com.example.radek.di.module
+package com.example.radek.movielist
 
-import com.example.radek.movielist.data.MoviesPageProviderImpl
+import com.example.radek.movielist.data.MoviesPageDataProviderImpl
 import com.example.radek.movielist.data.SortOptionsProviderImpl
 import com.example.radek.movielist.data.network.Api
 import com.example.radek.di.scope.ActivityScope
 import com.example.radek.jobexecutor.PageProviderExecutor
 import com.example.radek.model.MovieItem
-import com.example.radek.model.provider.MoviesPageProvider
+import com.example.radek.model.provider.MoviesPageDataProvider
 import com.example.radek.model.provider.SortOptionsProvider
-import com.example.radek.movielist.MovieListViewModelFactory
 import com.example.radek.movielist.data.MovieListPagedDataProviderFactory
 import dagger.Module
 import dagger.Provides
@@ -19,20 +18,20 @@ class MovieListModule {
 
     @Provides
     @ActivityScope
-    fun provideMainNetworkRepository(): PageProviderExecutor<MovieItem> {
+    fun providePageProviderExecutor(): PageProviderExecutor<MovieItem> {
         return PageProviderExecutor()
     }
 
     @Provides
     @ActivityScope
-    fun provideMoviesPageProvider(api: Api): MoviesPageProvider {
-        return MoviesPageProviderImpl(api)
+    fun provideMoviesPageProvider(api: Api): MoviesPageDataProvider {
+        return MoviesPageDataProviderImpl(api)
     }
 
     @Provides
     @ActivityScope
-    fun provideMovieListPagedDataProviderFactory(moviesPageProvider: MoviesPageProvider): MovieListPagedDataProviderFactory {
-        return MovieListPagedDataProviderFactory(moviesPageProvider)
+    fun provideMovieListPagedDataProviderFactory(moviesPageDataProvider: MoviesPageDataProvider): MovieListPagedDataProviderFactory {
+        return MovieListPagedDataProviderFactory(moviesPageDataProvider)
     }
 
     @Provides

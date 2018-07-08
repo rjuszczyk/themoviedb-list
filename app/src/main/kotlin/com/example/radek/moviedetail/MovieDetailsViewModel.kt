@@ -10,22 +10,22 @@ class MovieDetailsViewModel(
         private val movieItemId: Int
 ) : ViewModel() {
     val movieDetailsItem = MutableLiveData<MovieDetailsItem>()
-    val state = MutableLiveData<State>()
+    val loadingState = MutableLiveData<LoadingState>()
     init {
-        state.value = State.NotStarted
+        loadingState.value = LoadingState.NotStarted
         loadMovieDetails()
     }
 
     private fun loadMovieDetails() {
-        state.postValue(State.Loading)
+        loadingState.postValue(LoadingState.Loading)
         movieDetailsProvider.provideMovieDetails(movieItemId, object : MovieDetailsProvider.Callback {
             override fun onSuccess(movieDetailsItem: MovieDetailsItem) {
                 this@MovieDetailsViewModel.movieDetailsItem.postValue(movieDetailsItem)
-                state.postValue(State.Loaded)
+                loadingState.postValue(LoadingState.Loaded)
             }
 
             override fun onFailed(throwable: Throwable) {
-                state.postValue(State.Failed(throwable))
+                loadingState.postValue(LoadingState.Failed(throwable))
             }
         })
     }

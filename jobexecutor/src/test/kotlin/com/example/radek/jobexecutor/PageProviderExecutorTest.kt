@@ -1,7 +1,7 @@
 package com.example.radek.jobexecutor
 
 import com.example.radek.jobexecutor.response.InitialPagedResponse
-import com.example.radek.jobexecutor.response.PagedResponse
+import com.example.radek.jobexecutor.response.FollowingPagedResponse
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.doAnswer
@@ -74,7 +74,7 @@ class PageProviderExecutorTest {
     @Test
     fun `when job is failed but there are jobs in progress failure status is not emitted`() {
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
-        val callback2 = mock<(PagedResponse<String>) -> Unit>()
+        val callback2 = mock<(FollowingPagedResponse<String>) -> Unit>()
         val errorCaptor = argumentCaptor<(Throwable) -> Unit>()
         pageProviderExecutor.loadInitialPage(callback)
         pageProviderExecutor.loadPage(2, callback2)
@@ -88,7 +88,7 @@ class PageProviderExecutorTest {
     fun `when job is succeed but there are jobs in progress success status is not emitted`() {
         val result = InitialPagedResponse(10, listOf(""))
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
-        val callback2 = mock<(PagedResponse<String>) -> Unit>()
+        val callback2 = mock<(FollowingPagedResponse<String>) -> Unit>()
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
         pageProviderExecutor.loadInitialPage(callback)
         pageProviderExecutor.loadPage(2, callback2)
@@ -112,9 +112,9 @@ class PageProviderExecutorTest {
     @Test
     fun `when there is more than one job do not start it yet`() {
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
-        val callback2 = mock<(PagedResponse<String>) -> Unit>()
+        val callback2 = mock<(FollowingPagedResponse<String>) -> Unit>()
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
-        val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
+        val captor2 = argumentCaptor<(FollowingPagedResponse<String>) -> Unit>()
 
         pageProviderExecutor.loadInitialPage(callback)
         pageProviderExecutor.loadPage(2, callback2)
@@ -125,11 +125,11 @@ class PageProviderExecutorTest {
     @Test
     fun `second job is executed after first is succeed`() {
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
-        val callback2 = mock<(PagedResponse<String>) -> Unit>()
+        val callback2 = mock<(FollowingPagedResponse<String>) -> Unit>()
         val result = InitialPagedResponse(10, listOf(""))
-        val result2 = PagedResponse(10, 2, listOf(""))
+        val result2 = FollowingPagedResponse(10, 2, listOf(""))
         val captor = argumentCaptor<(InitialPagedResponse<String>) -> Unit>()
-        val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
+        val captor2 = argumentCaptor<(FollowingPagedResponse<String>) -> Unit>()
 
         pageProviderExecutor.loadInitialPage(callback)
         pageProviderExecutor.loadPage(2, callback2)
@@ -146,10 +146,10 @@ class PageProviderExecutorTest {
     @Test
     fun `second job is executed after first is failed`() {
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
-        val callback2 = mock<(PagedResponse<String>) -> Unit>()
-        val result2 = PagedResponse(10, 2, listOf(""))
+        val callback2 = mock<(FollowingPagedResponse<String>) -> Unit>()
+        val result2 = FollowingPagedResponse(10, 2, listOf(""))
 
-        val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
+        val captor2 = argumentCaptor<(FollowingPagedResponse<String>) -> Unit>()
         val errorCaptor = argumentCaptor<(Throwable) -> Unit>()
 
         pageProviderExecutor.loadInitialPage(callback)
@@ -167,8 +167,8 @@ class PageProviderExecutorTest {
     @Test
     fun `first failed job is resumed after retry called`() {
         val callback = mock<(InitialPagedResponse<String>) -> Unit>()
-        val callback2 = mock<(PagedResponse<String>) -> Unit>()
-        val captor2 = argumentCaptor<(PagedResponse<String>) -> Unit>()
+        val callback2 = mock<(FollowingPagedResponse<String>) -> Unit>()
+        val captor2 = argumentCaptor<(FollowingPagedResponse<String>) -> Unit>()
         val errorCaptor = argumentCaptor<(Throwable) -> Unit>()
         val errorCaptor2 = argumentCaptor<(Throwable) -> Unit>()
 

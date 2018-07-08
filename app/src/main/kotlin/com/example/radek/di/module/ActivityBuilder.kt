@@ -1,10 +1,10 @@
-package com.example.radek.di
+package com.example.radek.di.module
 
-import com.example.radek.di.module.MovieDetailsModule
-import com.example.radek.di.module.MovieListModule
 import com.example.radek.di.scope.ActivityScope
 import com.example.radek.moviedetail.MovieDetailsActivity
+import com.example.radek.moviedetail.MovieDetailsModule
 import com.example.radek.movielist.MovieListActivity
+import com.example.radek.movielist.MovieListModule
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

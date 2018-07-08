@@ -25,7 +25,7 @@ class MovieListViewModel(
         private val mainThreadExecutor: Executor
 ) : ViewModel() {
     val sortOptions = MutableLiveData<List<SortOptionItem>>()
-    val sortBy = MutableLiveData<SortOptionParameter>()
+    private val sortBy = MutableLiveData<SortOptionParameter>()
     val list:LiveData<PagedList<MovieItem>>// = MutableLiveData<PagedList<MovieItem>>()
     val repositoryState : LiveData<State>
 

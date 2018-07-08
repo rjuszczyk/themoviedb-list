@@ -22,3 +22,5 @@ allprojects {
 task<Delete>("clean") {
     delete(rootProject.buildDir)
 }
+
+//add loading images for list and detail

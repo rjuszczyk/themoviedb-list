@@ -1,4 +1,4 @@
-package com.example.radek.di.module
+package com.example.radek.moviedetail
 
 import com.example.radek.di.scope.ActivityScope
 import com.example.radek.model.provider.MovieDetailsProvider

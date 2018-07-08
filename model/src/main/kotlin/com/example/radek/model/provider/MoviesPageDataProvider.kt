@@ -3,7 +3,7 @@ package com.example.radek.model.provider
 import com.example.radek.model.MoviesPage
 import com.example.radek.model.SortOptionParameter
 
-interface MoviesPageProvider {
+interface MoviesPageDataProvider {
     fun provideMoviePage(page:Int, sortOption: SortOptionParameter, callback: Callback): Cancelable
 
     interface Cancelable {

@@ -1,7 +1,6 @@
 package com.example.radek.movielist.adapter
 
 import android.annotation.SuppressLint
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +13,10 @@ import com.example.radek.model.MovieItem
 
 @SuppressLint("SetTextI18n")
 class MovieListPagedAdapter(
-        diffCallback: DiffUtil.ItemCallback<MovieItem>,
         retryListener: RetryListener,
         private val itemClickedListener: MovieItemClickedListener
 
-) : AbsPagedListAdapter<MovieItem>(diffCallback, retryListener) {
+) : AbsPagedListAdapter<MovieItem>(MovieItemCallback(), retryListener) {
 
     override fun createProgressViewHolder(parent: ViewGroup): ProgressViewHolder {
         val tv = ProgressBar(parent.context)

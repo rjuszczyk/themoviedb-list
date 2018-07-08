@@ -5,13 +5,13 @@ import com.example.radek.movielist.data.network.model.MoviesResponse
 import com.example.radek.model.MovieItem
 import com.example.radek.model.MoviesPage
 import com.example.radek.model.SortOptionParameter
-import com.example.radek.model.provider.MoviesPageProvider
+import com.example.radek.model.provider.MoviesPageDataProvider
 import retrofit2.Call
 import retrofit2.Response
 
-class MoviesPageProviderImpl(val api: Api): MoviesPageProvider {
+class MoviesPageDataProviderImpl(val api: Api): MoviesPageDataProvider {
 
-    override fun provideMoviePage(page: Int, sortOption: SortOptionParameter, callback: MoviesPageProvider.Callback): MoviesPageProvider.Cancelable {
+    override fun provideMoviePage(page: Int, sortOption: SortOptionParameter, callback: MoviesPageDataProvider.Callback): MoviesPageDataProvider.Cancelable {
         val call = api.loadMoviesPage(page, sortOption.value)
         val cancelable = CancelableCall(call)
         call.enqueue(object : retrofit2.Callback<MoviesResponse> {
@@ -30,7 +30,7 @@ class MoviesPageProviderImpl(val api: Api): MoviesPageProvider {
         return cancelable
     }
 
-    internal class CancelableCall(val call:Call<MoviesResponse> ) : MoviesPageProvider.Cancelable {
+    internal class CancelableCall(val call:Call<MoviesResponse> ) : MoviesPageDataProvider.Cancelable {
         override fun cancel() {
             call.cancel()
         }

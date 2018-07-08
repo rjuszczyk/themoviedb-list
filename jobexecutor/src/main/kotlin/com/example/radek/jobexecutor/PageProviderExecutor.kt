@@ -1,7 +1,7 @@
 package com.example.radek.jobexecutor
 
 import com.example.radek.jobexecutor.response.InitialPagedResponse
-import com.example.radek.jobexecutor.response.PagedResponse
+import com.example.radek.jobexecutor.response.FollowingPagedResponse
 import java.util.*
 
 /**
@@ -25,7 +25,7 @@ class PageProviderExecutor<T> {
         executeNextIfPossible()
     }
 
-    fun loadPage(page: Int, callback: (PagedResponse<T>) -> Unit) {
+    fun loadPage(page: Int, callback: (FollowingPagedResponse<T>) -> Unit) {
         jobsList.add(PageJob(page, callback))
         executeNextIfPossible()
     }

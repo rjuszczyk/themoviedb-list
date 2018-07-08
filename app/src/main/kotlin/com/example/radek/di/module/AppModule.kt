@@ -1,20 +1,16 @@
 package com.example.radek.di.module
 
-import android.os.Handler
-import com.example.radek.di.scope.AppScope
+import android.app.Application
+import android.content.Context
 import dagger.Module
-import dagger.Provides
-import java.util.concurrent.Executor
+import javax.inject.Named
+import dagger.Binds
 
 
 @Module
-class AppModule {
+abstract class AppModule {
 
-    @AppScope
-    @Provides
-    fun provideMainThreadExecutor(): Executor {
-        val handler = Handler()
-        return Executor { p0 -> handler.post(p0) }
-    }
-
+    @Binds
+    @Named("AppContext")
+    internal abstract fun provideAppContext(app: Application): Context
 }

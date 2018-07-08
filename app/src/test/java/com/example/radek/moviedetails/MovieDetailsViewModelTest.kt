@@ -5,7 +5,7 @@ import android.arch.lifecycle.Observer
 import com.example.radek.model.MovieDetailsItem
 import com.example.radek.model.provider.MovieDetailsProvider
 import com.example.radek.moviedetail.MovieDetailsViewModel
-import com.example.radek.moviedetail.State
+import com.example.radek.moviedetail.LoadingState
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Before
 import org.junit.Rule
@@ -23,7 +23,7 @@ class MovieDetailsViewModelTest {
     @Mock
     lateinit var movieDetailsProvider: MovieDetailsProvider
     @Mock
-    lateinit var stateObserver: Observer<State>
+    lateinit var loadingStateObserver: Observer<LoadingState>
     @Mock
     lateinit var movieDetailsObserver: Observer<MovieDetailsItem>
     lateinit var movieDetailsViewModel: MovieDetailsViewModel
@@ -31,7 +31,7 @@ class MovieDetailsViewModelTest {
     @Before
     fun setup() {
         movieDetailsViewModel = MovieDetailsViewModel(movieDetailsProvider, itemId)
-        movieDetailsViewModel.state.observeForever(stateObserver)
+        movieDetailsViewModel.loadingState.observeForever(loadingStateObserver)
         movieDetailsViewModel.movieDetailsItem.observeForever(movieDetailsObserver)
     }
 
@@ -42,14 +42,14 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun `shows loading when providing data`() {
-        verify(stateObserver).onChanged(State.Loading)
+        verify(loadingStateObserver).onChanged(LoadingState.Loading)
     }
     @Test
     fun `shows loaded when providing data loaded`() {
         `when`(movieDetailsProvider.provideMovieDetails(eq(itemId), any())).thenAnswer {
             (it.arguments[1] as MovieDetailsProvider.Callback).onSuccess(mock())
         }
-        verify(stateObserver).onChanged(State.Loaded)
+        verify(loadingStateObserver).onChanged(LoadingState.Loaded)
     }
 
     @Test
@@ -57,9 +57,9 @@ class MovieDetailsViewModelTest {
         val callbackCaptor = argumentCaptor<MovieDetailsProvider.Callback>()
         verify(movieDetailsProvider).provideMovieDetails(eq(itemId), callbackCaptor.capture())
 
-        reset(stateObserver)
+        reset(loadingStateObserver)
         callbackCaptor.lastValue.onFailed(Throwable())
-        verify(stateObserver).onChanged(any<State.Failed>())
+        verify(loadingStateObserver).onChanged(any<LoadingState.Failed>())
     }
 
     @Test
@@ -73,8 +73,8 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun `loading when retry button clicked`() {
-        reset(stateObserver)
+        reset(loadingStateObserver)
         movieDetailsViewModel.retryLoading()
-        verify(stateObserver).onChanged(State.Loading)
+        verify(loadingStateObserver).onChanged(LoadingState.Loading)
     }
 }

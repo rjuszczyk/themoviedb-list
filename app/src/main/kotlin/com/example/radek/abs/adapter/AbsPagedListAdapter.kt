@@ -79,7 +79,7 @@ abstract class AbsPagedListAdapter<T>(
     override fun getItemViewType(position: Int): Int {
         var additionalRowDisplayed = false
         if(repositoryState == State.Loading || repositoryState is State.Failed) additionalRowDisplayed = true
-//        return if (repositoryState != State.NotStarted && position == super.getItemCount()) {
+//        return if (repositoryState != LoadingState.NotStarted && position == super.getItemCount()) {
         return if (additionalRowDisplayed && position == super.getItemCount()) {
             if (repositoryState is State.Failed) 1 else 2
         } else {

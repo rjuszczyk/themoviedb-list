@@ -3,7 +3,6 @@ package com.example.radek.movielist
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -35,7 +34,7 @@ class MovieListActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)//use databinding
 
         initSpinner()
         initRecycler()
@@ -85,17 +84,7 @@ class MovieListActivity : DaggerAppCompatActivity() {
 
     private fun initRecycler() {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-
         pagedAdapter = MovieListPagedAdapter(
-                object : DiffUtil.ItemCallback<MovieItem>() {
-                    override fun areItemsTheSame(oldItem: MovieItem?, newItem: MovieItem?): Boolean {
-                        return oldItem == newItem
-                    }
-
-                    override fun areContentsTheSame(oldItem: MovieItem?, newItem: MovieItem?): Boolean {
-                        return oldItem == newItem
-                    }
-                },
                 object : AbsPagedListAdapter.RetryListener {
                     override fun retryCalled() {
                         movieListViewModel.retry()
@@ -105,7 +94,6 @@ class MovieListActivity : DaggerAppCompatActivity() {
                     override fun onItemClicked(movieItem: MovieItem) {
                         startActivity(MovieDetailsActivity.getStartIntent(this@MovieListActivity, movieItem))
                     }
-
                 }
         )
 
